@@ -1,7 +1,9 @@
 #include "window.h"
 #include <iostream>
+#include <string>
 
-Window::Window(const char *title, int width, int height)
+Window::Window(const char *title, int width, int height, int refreshRate)
+    : refreshRate(refreshRate)
 {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -42,8 +44,15 @@ Window::~Window()
 void Window::mainLoop()
 {
     SDL_Event e;
+    Uint32 frameDelay = 1000 / refreshRate;
+    Uint32 frameStart, frameTime;
+    int frameCount = 0;
+    Uint32 lastTime = SDL_GetTicks();
+
     while (isRunning)
     {
+        frameStart = SDL_GetTicks();
+
         while (SDL_PollEvent(&e))
         {
             if (e.type == SDL_QUIT)
@@ -55,5 +64,20 @@ void Window::mainLoop()
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         SDL_RenderPresent(renderer);
+
+        frameTime = SDL_GetTicks() - frameStart;
+        if (frameDelay > frameTime)
+        {
+            SDL_Delay(frameDelay - frameTime);
+        }
+
+        frameCount++;
+        if (SDL_GetTicks() - lastTime >= 1000)
+        {
+            std::string title = "FPS: " + std::to_string(frameCount);
+            SDL_SetWindowTitle(window, title.c_str());
+            frameCount = 0;
+            lastTime = SDL_GetTicks();
+        }
     }
 }
