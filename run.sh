@@ -14,5 +14,5 @@ cmake ..
 # Compilar el proyecto
 make
 
-# Ejecutar el programa
-./MySDLProject
+# Ejecutar el programa con los argumentos pasados al script
+./MySDLProject "$1"
