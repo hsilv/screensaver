@@ -7,4 +7,4 @@ SDL_Window *initWindow(const char *title, int width, int height);
 SDL_Renderer *initRenderer(SDL_Window *window);
 void cleanup(SDL_Window *window, SDL_Renderer *renderer);
 
-#endif // WINDOW_H
+#endif

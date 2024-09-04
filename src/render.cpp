@@ -4,53 +4,51 @@
 #include <iostream>
 #include "render.h"
 
-void renderBars(SDL_Renderer *renderer, fftwf_complex *fft_output, int numBars, std::vector<float> &smoothedMagnitudes)
+/**
+ * @brief Genera un color pseudoaleatorio basado en el índice.
+ *
+ * @param index Índice de la barra.
+ * @return SDL_Color Color generado.
+ */
+SDL_Color generateColor(int index)
+{
+    // Generar colores pseudoaleatorios basados en el índice
+    Uint8 r = (index * 97) % 256;
+    Uint8 g = (index * 53) % 256;
+    Uint8 b = (index * 29) % 256;
+    return {r, g, b, 255};
+}
+
+/**
+ * @brief Renderiza barras de un espectro de audio en un renderer SDL.
+ *
+ * @param renderer Puntero al renderer SDL.
+ * @param fft_output Vector de salida de la FFT.
+ * @param numBars Número de barras a renderizar.
+ * @param smoothedMagnitudes Vector de magnitudes suavizadas.
+ */
+void renderBars(SDL_Renderer *renderer, const std::vector<std::complex<float>> &fft_output, int numBars, std::vector<float> &smoothedMagnitudes)
 {
     int width, height;
     SDL_GetRendererOutputSize(renderer, &width, &height);
 
-    int barWidth = width / numBars;
-    float freqPerBin = SAMPLE_RATE / static_cast<float>(FRAMES_PER_BUFFER);
+    if (fft_output.size() < numBars || smoothedMagnitudes.size() < numBars)
+    {
+        std::cerr << "Error: fft_output o smoothedMagnitudes no tienen el tamaño adecuado." << std::endl;
+        return;
+    }
 
+    float barWidth = static_cast<float>(width) / numBars;
     for (int i = 0; i < numBars; ++i)
     {
-        float startFreq = MIN_FREQ * std::pow(MAX_FREQ / MIN_FREQ, static_cast<float>(i) / numBars);
-        float endFreq = MIN_FREQ * std::pow(MAX_FREQ / MIN_FREQ, static_cast<float>(i + 1) / numBars);
-        int startBin = static_cast<int>(startFreq / freqPerBin);
-        int endBin = static_cast<int>(endFreq / freqPerBin);
-
-        float magnitude = 0.0f;
-        if (endBin <= startBin)
-        {
-            endBin = startBin + 1; // Asegurar al menos un bin
-        }
-
-        for (int bin = startBin; bin < endBin; ++bin)
-        {
-            if (bin < FRAMES_PER_BUFFER / 2)
-            {
-                float real = fft_output[bin][0];
-                float imag = fft_output[bin][1];
-                if (std::isnan(real) || std::isnan(imag) || std::isinf(real) || std::isinf(imag))
-                {
-                    std::cerr << "Invalid FFT output at bin " << bin << ": real = " << real << ", imag = " << imag << std::endl;
-                }
-                magnitude += std::sqrt(real * real + imag * imag);
-            }
-        }
-
-        magnitude /= (endBin - startBin); // Average magnitude over the range
-
-        if (std::isnan(magnitude) || std::isinf(magnitude))
-        {
-            magnitude = 0.0f; // Reset invalid magnitude to 0
-        }
-
+        float magnitude = std::abs(fft_output[i]);
         smoothedMagnitudes[i] = SMOOTHING_FACTOR * smoothedMagnitudes[i] + (1.0f - SMOOTHING_FACTOR) * magnitude;
 
-        int barHeight = static_cast<int>((smoothedMagnitudes[i] / 100.0) * height);
-        SDL_Rect bar = {i * barWidth, height - barHeight, barWidth - 2, barHeight};
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        float barHeight = smoothedMagnitudes[i] * height;
+        SDL_Rect bar = {static_cast<int>(i * barWidth), height - static_cast<int>(barHeight), static_cast<int>(barWidth), static_cast<int>(barHeight)};
+
+        SDL_Color color = generateColor(i);
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
         SDL_RenderFillRect(renderer, &bar);
     }
 }
