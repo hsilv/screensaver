@@ -17,7 +17,26 @@
  *
  * @param programName Nombre del programa.
  */
-void printUsage(const char *programName) { /*...*/ }
+void printUsage(const char *programName)
+{
+    std::cout << "Usage: " << programName << " <number_of_bars>" << std::endl;
+}
+
+/**
+ * @brief Verifica si una cadena es un número.
+ *
+ * @param str Cadena a verificar.
+ * @return true si la cadena es un número, false en caso contrario.
+ */
+bool isNumber(const std::string &str)
+{
+    for (char const &c : str)
+    {
+        if (!std::isdigit(c))
+            return false;
+    }
+    return true;
+}
 
 /**
  * @brief Función principal del programa.
@@ -29,14 +48,49 @@ void printUsage(const char *programName) { /*...*/ }
 int main(int argc, char *argv[])
 {
     int numBars = NUM_BARS;
+
+    // Verificar que se haya proporcionado al menos un argumento
     if (argc > 1)
     {
-        numBars = std::stoi(argv[1]);
-        if (numBars <= 0)
+        std::string arg1 = argv[1];
+
+        // Verificar que el argumento sea un número
+        if (isNumber(arg1))
         {
-            std::cerr << "Number of bars must be a positive integer." << std::endl;
+            try
+            {
+                numBars = std::stoi(arg1);
+                if (numBars <= 0)
+                {
+                    std::cerr << "Number of bars must be a positive integer." << std::endl;
+                    return 1;
+                }
+            }
+            catch (const std::invalid_argument &e)
+            {
+                std::cerr << "Invalid argument: " << e.what() << std::endl;
+                printUsage(argv[0]);
+                return 1;
+            }
+            catch (const std::out_of_range &e)
+            {
+                std::cerr << "Argument out of range: " << e.what() << std::endl;
+                printUsage(argv[0]);
+                return 1;
+            }
+        }
+        else
+        {
+            std::cerr << "The argument must be a positive integer." << std::endl;
+            printUsage(argv[0]);
             return 1;
         }
+    }
+    else
+    {
+        std::cerr << "No arguments provided." << std::endl;
+        printUsage(argv[0]);
+        return 1;
     }
 
     // Inicializar la ventana SDL
@@ -89,7 +143,7 @@ int main(int argc, char *argv[])
                     // Copiar los datos a un vector para aplicar el filtro de paso alto
                     std::vector<float> highPassSamples = audioData.samples;
 
-                    float samplingRate = 44100.0f;
+                    float samplingRate = 40000.0f;
                     float scaleFactor = 5.0f;
 
                     // Realizar la FFT en las muestras de paso alto

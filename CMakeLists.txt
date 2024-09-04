@@ -20,6 +20,9 @@ include_directories(${FFTW_INCLUDE_DIRS})
 find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
+# Find OpenMP
+find_package(OpenMP REQUIRED)
+
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/lib)
@@ -36,5 +39,10 @@ set(SOURCES
 # Create executable
 add_executable(MySDLProject ${SOURCES})
 
-# Link SDL2, PortAudio, FFTW3, and SDL2_ttf
-target_link_libraries(MySDLProject ${SDL2_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${FFTW_LIBRARIES} ${SDL2_TTF_LIBRARIES} fftw3f SDL2_ttf)
+# Link SDL2, PortAudio, FFTW3, SDL2_ttf, and OpenMP
+target_link_libraries(MySDLProject ${SDL2_LIBRARIES} ${PORTAUDIO_LIBRARIES} ${FFTW_LIBRARIES} ${SDL2_TTF_LIBRARIES} fftw3f SDL2_ttf OpenMP::OpenMP_CXX)
+
+# Add OpenMP compile options
+if(OpenMP_CXX_FOUND)
+    target_compile_options(MySDLProject PRIVATE ${OpenMP_CXX_FLAGS})
+endif()
