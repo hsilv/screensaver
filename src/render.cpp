@@ -39,6 +39,8 @@ void renderBars(SDL_Renderer *renderer, const std::vector<std::complex<float>> &
     }
 
     float barWidth = static_cast<float>(width) / numBars;
+
+#pragma omp parallel for
     for (int i = 0; i < numBars; ++i)
     {
         float magnitude = std::abs(fft_output[i]);
@@ -48,7 +50,10 @@ void renderBars(SDL_Renderer *renderer, const std::vector<std::complex<float>> &
         SDL_Rect bar = {static_cast<int>(i * barWidth), height - static_cast<int>(barHeight), static_cast<int>(barWidth), static_cast<int>(barHeight)};
 
         SDL_Color color = generateColor(i);
-        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-        SDL_RenderFillRect(renderer, &bar);
+#pragma omp critical
+        {
+            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+            SDL_RenderFillRect(renderer, &bar);
+        }
     }
 }
