@@ -17,7 +17,11 @@
  *
  * @param programName Nombre del programa.
  */
-void printUsage(const char *programName) { /*...*/ }
+void printUsage(const char *programName)
+{
+    std::cout << "Usage: " << programName << " <number_of_bars>" << std::endl;
+    std::cout << "  <number_of_bars>  Número de barras a renderizar (debe ser un entero positivo)." << std::endl;
+}
 
 /**
  * @brief Función principal del programa.
@@ -40,7 +44,7 @@ int main(int argc, char *argv[])
     }
 
     // Inicializar la ventana SDL
-    SDL_Window *window = initWindow("Spectrum Analyzer", 800, 600);
+    SDL_Window *window = initWindow("Spectrum Analyzer", 1000, 600);
     if (!window)
         return 1;
 
