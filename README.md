@@ -39,3 +39,6 @@ Esto capturará el audio de tu micrófono, si quieres escuchar el audio de tu es
 
 ## Ejemplo
 Una vez ejecutado deberías ver algo así
+
+| ![image](https://github.com/user-attachments/assets/4534678a-6667-4a12-b6a7-a398e99a8809) | ![image](https://github.com/user-attachments/assets/3d5cc3ba-e114-44ec-91ff-3de4937e3abd) |
+| ------ | ----- |
