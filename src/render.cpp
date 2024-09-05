@@ -58,11 +58,10 @@ void renderBars(SDL_Renderer *renderer, const std::vector<std::complex<float>> &
 
         // Generar un color para la barra
         SDL_Color color = generateColor(i);
-        {
-            // Establecer el color de dibujo del renderer
-            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-            // Renderizar la barra
-            SDL_RenderFillRect(renderer, &bar);
-        }
+
+        // Establecer el color de dibujo del renderer
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        // Renderizar la barra
+        SDL_RenderFillRect(renderer, &bar);
     }
 }

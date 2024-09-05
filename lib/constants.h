@@ -19,6 +19,6 @@ const float HIGH_PASS_AMPLIFICATION = 10.0f; // Alpha value for high-pass filter
 const float HIGH_PASS_START_POINT = 0.9f;    // Start point for high-pass filter
 const float LOW_FREQ_AMPLIFICATION = 1.5f;   // Amplification factor for low frequencies
 const float MID_FREQ_AMPLIFICATION = 3.0f;   // Amplification factor for mid frequencies
-const float HIGH_FREQ_AMPLIFICATION = 5.0f;  // Amplification factor for high frequencies
+const float HIGH_FREQ_AMPLIFICATION = 10.0f; // Amplification factor for high frequencies
 
 #endif

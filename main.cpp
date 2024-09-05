@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
                     // Copiar los datos a un vector para aplicar el filtro de paso alto
                     std::vector<float> highPassSamples = audioData.samples;
 
-                    float samplingRate = 40000.0f;
+                    float samplingRate = 44100.0f;
                     float scaleFactor = 5.0f;
 
                     // Realizar la FFT en las muestras de paso alto
